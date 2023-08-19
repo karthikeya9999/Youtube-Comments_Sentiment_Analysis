@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sentiment Analysis Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Sentiment Analysis Results</h1>
+
+    <div class="center">
+        <h2>Pie Chart</h2>
+        <img src="{{ url_for('static', filename='sentiment.png') }}" alt="Sentiment Analysis Pie Chart">
+    </div>
+
+    <div>
+        <h2>F1 Score and Accuracy</h2>
+        <p>Total comments analyzed: {{ total }}</p>
+        <p>Positive comments: {{ positive }} ({{ '%.2f' % (100 * positive / total) }}%)</p>
+        <p>Negative comments: {{ negative }} ({{ '%.2f' % (100 * negative / total) }}%)</p>
+        <p>Neutral comments: {{ neutral }} ({{ '%.2f' % (100 * neutral / total) }}%)</p>
+        <p>F1 score for positive comments: {{ '%.2f' % f1_positive }}</p>
+        <p>F1 score for negative comments: {{ '%.2f' % f1_negative }}</p>
+        <p>F1 score for neutral comments: {{ '%.2f' % f1_neutral }}</p>
+        <p>Total F1 score: {{ f1 }}</p>
+        <p>Accuracy: {{ accuracy }}</p>
+    </div>
+
+    <div>
+        <h2>Show Comments</h2>
+        <button id="showComments" onclick="showComments()">Show Top and Worst Comments</button>
+    </div>
+
+    <div id="topWorstComments" style="display:none">
+        <h2>Positive Comments</h2>
+        <div class="table-container">
+            <table>
+                <tr>
+                    <th>No.</th>
+                    <th>Comment</th>
+                    <th>Score</th>
+                </tr>
+                {% for index, (comment, sign, score) in enumerate(positive_comments[:5], start=1) %}
+                <tr>
+                    <td>{{ index }}</td>
+                    <td>{{ comment }}</td>
+                    <td class="{{ 'positive' if score > 0 else 'negative' }}">{{ sign }}{{ '%.2f' % score }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        <h2>Negative Comments</h2>
+        <div class="table-container">
+            <table>
+                <tr>
+                    <th>No.</th>
+                    <th>Comment</th>
+                    <th>Score</th>
+                </tr>
+                {% for index, (comment, sign, score) in enumerate(negative_comments[-5:], start=1) %}
+                <tr>
+                    <td>{{ index }}</td>
+                    <td>{{ comment }}</td>
+                    <td class="{{ 'positive' if score > 0 else 'negative' }}">{{ sign }}{{ '%.2f' % score }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        <button onclick="goBack()">Go Back</button>
+    </div>
+
+    <script>
+        function showComments() {
+            document.getElementById("showComments").style.display = "none";
+            document.getElementById("topWorstComments").style.display = "block";
+        }
+
+        function goBack() {
+            window.location.href = "{{ url_for('index') }}";
+        }
+    </script>
+</body>
+</html>
